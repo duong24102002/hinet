@@ -1,0 +1,63 @@
+@model Hinet.Web.Areas.QLSuKienArea.Models.CreateVM
+
+<style>
+    .row .form-group {
+        margin: 5px;
+    }
+</style>
+<div class="modal-dialog modal-lg">
+    @using (Ajax.BeginForm("Create", "QLSuKien", new { area = "QLSuKienArea" }, new AjaxOptions()
+    {
+        HttpMethod = "POST",
+        OnFailure = "AjaxFormError",
+        OnSuccess = "AjaxFormSuccess"
+    }, new { id = "createQLSuKienForm", enctype = "multipart/form-data", autocomplete = "off" }))
+    {
+        @Html.AntiForgeryToken()
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tạo mới Sự Kiện</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Tên Sự Kiện <span class="red">*</span></label>
+                            @Html.TextBoxFor(m => m.TenSuKien, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.TenSuKien, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Ngày Sự Kiện <span class="red">*</span></label>
+                            @Html.TextBoxFor(m => m.NgaySuKien, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                            @Html.ValidationMessageFor(m => m.NgaySuKien, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Địa Điểm <span class="red">*</span></label>
+                            @Html.TextBoxFor(m => m.DiaDiem, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.DiaDiem, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Mô Tả</label>
+                            @Html.TextAreaFor(m => m.MoTa, 4, 3, new { @class = "form-control resize-vertical" })
+                            @Html.ValidationMessageFor(m => m.MoTa, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer center">
+                <button type="submit" class="btn btn-primary">Hoàn thành</button>
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    }
+</div>
+
+@Scripts.Render("~/bundles/jqueryval")

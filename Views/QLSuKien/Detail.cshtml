@@ -1,0 +1,43 @@
+@{
+    ViewBag.Title = "Quản Lý Sự Kiện";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.ModuleName = "Quản lý sự kiện";
+    ViewBag.PageName = "Thông tin chi tiết sự kiện";
+    ViewBag.ModuleCode = "QLSuKien_detail";
+}
+@using Hinet.Model.Entities
+@using Hinet.Web.Areas.QLSuKienArea.Models
+@model DetailVM
+
+@section ActionBarRight{
+    <a href="/QLSuKienArea/QLSuKien/Index" class="btn btn-primary btn-sm">Quay lại</a>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table-info">
+            <tr>
+                <td>Tên Sự Kiện</td>
+                <td>@Model.objInfo.TenSuKien</td>
+            </tr>
+            <tr>
+                <td>Ngày Sự Kiện</td>
+                <td>
+                    @(Model.objInfo.NgaySuKien.HasValue ? Model.objInfo.NgaySuKien.Value.ToString("dd/MM/yyyy") : "")
+                </td>
+            </tr>
+            <tr>
+                <td>Địa Điểm</td>
+                <td>@Model.objInfo.DiaDiem</td>
+            </tr>
+            <tr>
+                <td>Mô Tả</td>
+                <td>@Model.objInfo.MoTa</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
