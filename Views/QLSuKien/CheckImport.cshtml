@@ -42,7 +42,7 @@
             <br>
         </div>
     }
-    @if (!Model.ListData.Any() && !Model.ListFalse.Any())
+    @if ((Model.ListData == null || !Model.ListData.Any()) && (Model.ListFalse == null || !Model.ListFalse.Any()))
     {
         <div class="alert alert-warning">
             <button type="button" class="close" data-dismiss="alert">
@@ -64,6 +64,7 @@
             <div class="widget-header">
                 <h4 class="widget-title"><strong>Dữ liệu hợp lệ</strong></h4>
             </div>
+
             <div class="widget-body">
                 <div class="widget-main">
                     <div class="hntbl-cover" style="padding:10px;">
@@ -95,6 +96,7 @@
             <div class="widget-header">
                 <h4 class="widget-title"><strong>Dữ liệu không hợp lệ</strong></h4>
             </div>
+
             <div class="widget-body">
                 <div class="widget-main">
                     <div class="hntbl-cover" style="padding:10px;">
@@ -123,12 +125,14 @@
     </div>
 </div>
 @section scripts{
+
     <script src="~/assets/js/jquery.dataTables.min.js"></script>
     <script src="~/assets/js/dataTables.colVis.min.js"></script>
     <script src="~/assets/js/dataTables.tableTools.min.js"></script>
     <script src="~/assets/js/dataTables.bootstrap.min.js"></script>
     <script src="~/assets/js/datatables.responsive.min.js"></script>
     <script>
+
         $(".checkBoxControl").click(function () {
             var tbl = $(this).parents("table").first();
             if ($(this).prop("checked")) {
@@ -136,6 +140,7 @@
                     if (!$(this).prop("checked")) {
                         $(this).prop("checked", true);
                     }
+
                 })
             } else {
                 tbl.find("input:checkbox.global_checkbox:checked").each(function () {
@@ -151,7 +156,7 @@
             $("#tbl-CheckData-truedata tbody input:checkbox.global_checkbox:checked").each(function () {
                 var row = $(this).parents("tr").first();
                 var obj = {};
-                obj["Id"] = ($(this).val());
+                obj["Id"]=($(this).val());
                 row.find("td input[type=hidden]").each(function () {
                     var elem = $(this)
                     var name = elem.attr("data-name");
@@ -203,7 +208,7 @@
                     success: function (rs) {
                         if (rs.Status) {
                             NotiSuccess("Export dữ liệu thành công");
-                            var win1 = window.open(rs.PathStore, '_self');
+                            var win1= window.open(rs.PathStore, '_self');
                             if (win1) {
                             } else {
                                 alert('Hãy cho phép website mở popup');
@@ -245,6 +250,7 @@
                 NotiError("Vui lòng kiểm tra lại thông tin");
             }
             return false;
+
         }
         var LoadDatalistFalse = function (item) {
             var config = [];
@@ -320,36 +326,36 @@
                 paging: true,
                 "order": [[0, 'none'], [1, 'asc']],
                 "aoColumns": [
-                    {
-                        "sClass": "center width50",
-                        "mData": function (data, type, dataToSet) {
-                            return '<input class="global_checkbox" ' + ' type="checkbox" name="ids" value="' + data.Id + '" />';
-                        },
-                        "orderable": false
-                    },
-                    {
-                        "mData": function (data, type, dataToSet) {
-                            var str = '<input class="data-column" data-name="TenSuKien" type="hidden" value="' + data.TenSuKien + '">' + data.TenSuKien;
-                            return str;
-                        },
-                    }, {
-                        "mData": function (data, type, dataToSet) {
-                            var str = '<input class="data-column" data-name="NgaySuKien" type="hidden" value="' + data.NgaySuKien + '">' + data.NgaySuKien;
-                            return str;
-                        },
-                    },
-                    {
-                        "mData": function (data, type, dataToSet) {
-                            var str = '<input class="data-column" data-name="DiaDiem" type="hidden" value="' + data.DiaDiem + '">' + data.DiaDiem;
-                            return str;
-                        },
-                    },
-                    {
-                        "mData": function (data, type, dataToSet) {
-                            var str = '<input class="data-column" data-name="MoTa" type="hidden" value="' + data.MoTa + '">' + data.MoTa;
-                            return str;
-                        },
-                    },
+                     {
+                         "sClass": "center width50",
+                         "mData": function (data, type, dataToSet) {
+                             return '<input class="global_checkbox" ' + ' type="checkbox" name="ids" value="' + data.Id + '" />';
+                         },
+                         "orderable": false
+                     },
+                     {
+                         "mData": function (data, type, dataToSet) {
+                             var str = '<input class="data-column" data-name="TenSuKien" type="hidden" value="' + getValueDisplay(data.TenSuKien) + '">' + getValueDisplay(data.TenSuKien);
+                             return str;
+                         },
+                     }, {
+                         "mData": function (data, type, dataToSet) {
+                             var str = '<input class="data-column" data-name="NgaySuKien" type="hidden" value="' + getValueDisplay(data.NgaySuKien) + '">' + getValueDisplay(data.NgaySuKien);
+                             return str;
+                         },
+                     },
+                     {
+                         "mData": function (data, type, dataToSet) {
+                             var str = '<input class="data-column" data-name="DiaDiem" type="hidden" value="' + getValueDisplay(data.DiaDiem) + '">' + getValueDisplay(data.DiaDiem);
+                             return str;
+                         },
+                     },
+                     {
+                         "mData": function (data, type, dataToSet) {
+                             var str = '<input class="data-column" data-name="MoTa" type="hidden" value="' + getValueDisplay(data.MoTa) + '">' + getValueDisplay(data.MoTa);
+                             return str;
+                         },
+                     },
                     {
                         "sClass": "center",
                         "mData": function (data, type, dataToSet) {
@@ -358,6 +364,7 @@
                             result += "</div>";
                             return result;
                         },
+
                     },
                 ],
                 "fnDrawCallback": function (oSettings) {
@@ -371,7 +378,7 @@
             row.remove();
         }
         function pagefunction() {
-            var lstData = eval(@dataJson);
+            var lstData=eval(@dataJson);
             successAjaxUpload(lstData);
         }
         pagefunction();

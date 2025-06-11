@@ -1,3 +1,4 @@
+@Html.AntiForgeryToken()
 @{
     ViewBag.Title = "Quản Lý Sự Kiện";
     Layout = "~/Views/Shared/_LayoutVelzon.cshtml";
@@ -20,14 +21,61 @@
     var lstData = Html.Raw(JsonConvert.SerializeObject(Model.ListItem));
 }
 
+<!-- Modal Thêm mới Sự kiện -->
+<div class="modal fade" id="modalCreateQLSuKien" tabindex="-1" aria-labelledby="modalCreateQLSuKienLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="max-width: 500px; margin: 0 auto;">
+            @using (Ajax.BeginForm("Create", "QLSuKien", new { area = "QLSuKienArea" }, new AjaxOptions()
+            {
+                HttpMethod = "POST",
+                OnFailure = "AjaxFormError",
+                OnSuccess = "AjaxFormSuccess"
+            }, new { id = "createQLSuKienForm", enctype = "multipart/form-data", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header border-0 pt-4 pb-2">
+                    <h4 class="modal-title fw-bold" id="modalCreateQLSuKienLabel">Cập nhật Quản Lý Sự Kiện</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="form-group mb-3">
+                        <label class="form-label">Tên Sự Kiện</label>
+                        @Html.TextBox("TenSuKien", null, new { @class = "form-control", placeholder = "Nhập tên sự kiện" })
+                        @Html.ValidationMessage("TenSuKien", "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Ngày Sự Kiện</label>
+                        @Html.TextBox("NgaySuKien", null, new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessage("NgaySuKien", "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Địa Điểm</label>
+                        @Html.TextBox("DiaDiem", null, new { @class = "form-control", placeholder = "Nhập địa điểm tổ chức" })
+                        @Html.ValidationMessage("DiaDiem", "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Mô Tả</label>
+                        @Html.TextArea("MoTa", null, 4, 50, new { @class = "form-control", placeholder = "Nhập mô tả (nếu có)" })
+                        @Html.ValidationMessage("MoTa", "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pb-4 pt-2">
+                    <button type="submit" class="btn btn-primary px-4">Hoàn thành</button>
+                    <button type="button" class="btn btn-default px-4" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
 <div class="mb-1 d-flex justify-content-end fix_p-box-action">
     <a href="#collapseDiv" aria-controls="collapsePanel" data-bs-toggle="collapse" role="button" class="btn btn-primary btn-sm btn-secondary m-1 fix_btnFind">
         <i class="ri-search-line "></i> Tìm kiếm
     </a>
-    <a href="/QLSuKienArea/QLSuKien/Import" class="btn btn-primary btn-sm  btn-secondary m-1 fix_btnImport">
+    <a href="/QLSuKienArea/QLSuKien/Import" class="btn btn-primary btn-sm btn-secondary m-1 fix_btnImport">
         <i class="ri-upload-line "></i> Import
     </a>
-    <a href="/QLSuKienArea/QLSuKien/Create" class="btn btn-primary btn-sm btn-secondary m-1 fix_btnAdd">
+    <a href="javascript:void(0)" id="btnShowCreateQLSuKienModal" class="btn btn-primary btn-sm btn-secondary m-1 fix_btnAdd">
         <i class="ri-add-line"></i> Thêm mới
     </a>
 </div>
@@ -58,9 +106,14 @@
         </div>
     </div>
 </div>
-
 <script>
     var lstData = eval(@lstData);
+
+    // Lọc bỏ các dòng mà tất cả các trường đều rỗng/null (bạn có thể bổ sung điều kiện tùy ý)
+    lstData = lstData.filter(function(item) {
+        return item.TenSuKien || item.NgaySuKien || item.DiaDiem || item.MoTa;
+    });
+
     var moduleTableSelector = "#tbl-QLSuKien";
     function pagefunction() {
         var conf = [
@@ -83,7 +136,7 @@
                         </button>
                         <ul class="dropdown-menu fix_hover-li">`;
                     result += "<li><a href='javascript:void(0)' onclick='EditAction(\"/QLSuKienArea/QLSuKien/Edit/" + data.Id + "\")'   title = 'Chỉnh sửa'><i class='glyphicon glyphicon-edit'> </i> Sửa thông tin</a> </li>";
-                    result += "<li><a href='javascript:void(0)' onclick='DeleteAction(\"/QLSuKienArea/QLSuKien/Delete/" + data.Id + "\")'  title = 'Xóa'><i class=' glyphicon glyphicon-remove' style='color:red'> </i> Xóa</a></li>";
+                    result += "<li><a href='javascript:void(0)' onclick='DeleteAction(" + data.Id + ")'  title = 'Xóa'><i class=' glyphicon glyphicon-remove' style='color:red'> </i> Xóa</a></li>";
                     result += "</ul></div>";
                     return result;
                 }
@@ -125,6 +178,10 @@
                 cache: false,
                 data: { "indexPage": page, "sortQuery": sortQuery, "pageSize": pageSize },
                 success: function (data) {
+                    // Lọc dữ liệu ở đây nữa để tránh lỗi khi backend trả về dòng rỗng
+                    data.ListItem = data.ListItem.filter(function(item) {
+                        return item.TenSuKien || item.NgaySuKien || item.DiaDiem || item.MoTa;
+                    });
                     $(moduleTableSelector).hinetTable("data", {
                         pageSize: pageSize != -1 ? pageSize : data.Count,
                         pageIndex: page,
@@ -152,8 +209,14 @@
 
     function AfterSussessActionAjaxform() {
         $(moduleTableSelector).hinetTable("reload");
+        $('#modalCreateQLSuKien').modal('hide');
+        $('#createQLSuKienForm')[0].reset();
     }
     function AjaxSearchSuccess(rs) {
+        // Lọc dữ liệu ở đây nữa (nếu bạn dùng tìm kiếm nâng cao trả về dòng rỗng)
+        rs.ListItem = rs.ListItem.filter(function(item) {
+            return item.TenSuKien || item.NgaySuKien || item.DiaDiem || item.MoTa;
+        });
         $(moduleTableSelector).hinetTable("data", {
             pageIndex: 1,
             pagecount: rs.TotalPage,
@@ -163,23 +226,34 @@
     }
     function DeleteAction(id) {
         if (confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
+            $(".fix_btnAction").prop("disabled", true);
             $.ajax({
                 url: '/QLSuKienArea/QLSuKien/Delete',
                 type: 'POST',
-                data: { id: id },
+                data: {
+                    id: id,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
                 success: function (result) {
+                    $(".fix_btnAction").prop("disabled", false); // Bật lại nút
+                    alert(result.Message);
                     if (result.Status) {
-                        alert(result.Message); // hoặc show toast
                         AfterSussessActionAjaxform();
-                    } else {
-                        alert(result.Message);
                     }
                 },
-                error: function () {
+                error: function (xhr) {
+                    $(".fix_btnAction").prop("disabled", false); // Bật lại nút
                     alert("Có lỗi xảy ra khi xóa!");
                 }
             });
         }
     }
+
+    $(document).on("click", "#btnShowCreateQLSuKienModal", function () {
+        $('#createQLSuKienForm')[0].reset();
+        $('#modalCreateQLSuKien').modal('show');
+    });
+
     pagefunction();
 </script>
+@Scripts.Render("~/bundles/jqueryval")

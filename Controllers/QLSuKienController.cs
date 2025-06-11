@@ -1,24 +1,32 @@
 using AutoMapper;
 using CommonHelper;
 using CommonHelper.Excel;
+using CommonHelper.String;
+using CommonHelper.Upload;
 using Hinet.Model.Entities;
 using Hinet.Service.Common;
 using Hinet.Service.DepartmentService;
 using Hinet.Service.DM_DulieuDanhmucService;
+using Hinet.Service.QLNhanSuChinhThucService.Dto;
 using Hinet.Service.QLSuKienService;
 using Hinet.Service.QLSuKienService.Dto;
 using Hinet.Web.Areas.QLSuKienArea.Models;
+using Hinet.Web.Common;
 using Hinet.Web.Filters;
 using log4net;
 using Microsoft.Extensions.Logging;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.Mvc;
+
 
 namespace Hinet.Web.Areas.QLSuKienArea.Controllers
 {
@@ -186,6 +194,7 @@ namespace Hinet.Web.Areas.QLSuKienArea.Controllers
         #endregion
         #region Action phục vụ xóa dữ liệu
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult Delete(long id)
         {
             var result = new JsonResultBO(true, "Xóa sự kiện thành công");
@@ -216,7 +225,6 @@ namespace Hinet.Web.Areas.QLSuKienArea.Controllers
         #endregion
 
         #region Action phục vụ import excel
-        // [PermissionAccess(Code = permissionImport)] // Bỏ comment nếu muốn kiểm soát quyền truy cập
         public ActionResult Import()
         {
             var model = new ImportVM();
@@ -247,55 +255,54 @@ namespace Hinet.Web.Areas.QLSuKienArea.Controllers
         }
         #endregion
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult CheckImport(HttpPostedFileBase file, int? ROWSTART, int? TenSuKien, int? NgaySuKien, int? DiaDiem, int? MoTa)
+        public ActionResult CheckImport(FormCollection collection, HttpPostedFileBase file)
         {
-            // Khởi tạo đúng kiểu và truyền 'true' cho state (nếu constructor yêu cầu); 
-            // hoặc không truyền gì nếu có constructor không tham số
-            var result = new JsonResultImportBO<QLSuKienImportDto>(true);
-
-            try
-            {
-                // Kiểm tra file
-                if (file == null || file.ContentLength == 0)
-                {
-                    result.Status = false;
-                    result.Message = "Chưa chọn file hoặc file rỗng.";
-                    return View("checkImport", result);
-                }
-
-                // TODO: Đọc file Excel và lấy dữ liệu vào listData
-                var listData = new List<QLSuKienImportDto>();
-                // ... Đọc file, ví dụ bằng EPPlus/NPOI, gán vào listData ...
-
-                // Ví dụ kiểm tra dữ liệu hợp lệ (cần sửa lại điều kiện thực tế)
-                result.ListData = listData.Where(x => IsValidImport(x)).ToList();
-                result.ListFalse = listData
-             .Where(x => !IsValidImport(x))
-             .Select(x => new List<string>
-             {
-                x.TenSuKien,
-                x.NgaySuKien,
-                x.DiaDiem,
-                x.MoTa
-             })
-             .ToList();
-                result.Status = true;
-                result.Message = "Đã kiểm tra dữ liệu import.";
-            }
-            catch (Exception ex)
+            JsonResultImportBO<QLSuKienImportDto> result = new JsonResultImportBO<QLSuKienImportDto>(true);
+            if (file == null)
             {
                 result.Status = false;
-                result.Message = "Lỗi import: " + ex.Message;
+                result.Message = "Không có file đọc dữ liệu";
+                return View(result);
             }
-            return View("checkImport", result);
+
+            //Lưu file upload để đọc
+            var saveFileResult = UploadProvider.SaveFile(file, null, ".xls,.xlsx", null, "TempImportFile", HostingEnvironment.MapPath("/Uploads"));
+            if (!saveFileResult.status)
+            {
+                result.Status = false;
+                result.Message = saveFileResult.message;
+                return View(result);
+            }
+            else
+            {
+
+                #region Config để import dữ liệu
+                var importHelper = new ImportExcelHelper<QLSuKienImportDto>();
+                importHelper.PathTemplate = saveFileResult.fullPath;
+                //importHelper.StartCol = 2;
+                importHelper.StartRow = collection["ROWSTART"].ToIntOrZero();
+                importHelper.ConfigColumn = new List<ConfigModule>();
+                importHelper.ConfigColumn = ExcelImportExtention.GetConfigCol<QLSuKienImportDto>(collection);
+                #endregion
+                var rsl = importHelper.ImportCustomRow();
+                if (rsl.Status)
+                {
+                    result.Status = true;
+                    result.Message = rsl.Message;
+
+                    result.ListData = rsl.ListTrue;
+                    result.ListFalse = rsl.lstFalse;
+                }
+                else
+                {
+                    result.Status = false;
+                    result.Message = rsl.Message;
+                }
+
+            }
+            return View(result);
         }
 
-        // Ví dụ hàm kiểm tra hợp lệ, bạn sửa lại cho đúng nghiệp vụ
-        private bool IsValidImport(QLSuKienImportDto x)
-        {
-            return !string.IsNullOrWhiteSpace(x.TenSuKien); // hoặc điều kiện bạn muốn
-        }
         // Action hỗ trợ tải về các dữ liệu lỗi không import được
         [HttpPost]
         public JsonResult GetExportError(List<string> lstData)
@@ -307,7 +314,6 @@ namespace Hinet.Web.Areas.QLSuKienArea.Controllers
             exPro.StartCol = 2;
             exPro.FileName = "ErrorImportQLSuKien";
 
-            // Sửa tại đây
             var result = exPro.ExportText(lstData.Select(x => new List<string> { x }).ToList());
 
             if (result.Status)
