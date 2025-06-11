@@ -1,8 +1,9 @@
 @{
     ViewBag.Title = "Kiểm tra dữ liệu Import";
-    Layout = "~/Views/Shared/_LayoutAce.cshtml";
-    ViewBag.ModuleName = "Quản lý Sự kiện";
+    Layout = "~/Views/Shared/_LayoutVelzon.cshtml"; // Thống nhất với Index
+    ViewBag.ModuleName = "Quản Lý Sự Kiện";
     ViewBag.PageName = "Kiểm tra dữ liệu Import";
+    ViewBag.ModuleCode = "QLSuKien";
 }
 
 @using Hinet.Service.Common;
@@ -16,11 +17,11 @@
     var dataJson = Html.Raw(JsonConvert.SerializeObject(Model));
 }
 
-@section ActionBarRight{
+<div class="mb-1 d-flex justify-content-end fix_p-box-action">
     <a class="btn btn-primary btn-sm" href="/QLSuKienArea/QLSuKien/import">
         <i class="fa fa-reply"></i> <span>Quay lại</span>
     </a>
-}
+</div>
 
 <div>
     <style>
@@ -125,6 +126,12 @@
     </div>
 </div>
 @section scripts{
+    <!-- Import jQuery trước -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Import DataTables JS + CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <script src="~/assets/js/jquery.dataTables.min.js"></script>
     <script src="~/assets/js/dataTables.colVis.min.js"></script>
@@ -140,7 +147,6 @@
                     if (!$(this).prop("checked")) {
                         $(this).prop("checked", true);
                     }
-
                 })
             } else {
                 tbl.find("input:checkbox.global_checkbox:checked").each(function () {
@@ -229,6 +235,7 @@
         function successAjaxUpload(rs) {
             if (rs.Status) {
                 LoadData(rs.ListData);
+
                 if (rs.ListData.length > 0) {
                     $("#block-dung").css("display", "block");
                 }
@@ -250,7 +257,6 @@
                 NotiError("Vui lòng kiểm tra lại thông tin");
             }
             return false;
-
         }
         var LoadDatalistFalse = function (item) {
             var config = [];

@@ -2,11 +2,16 @@
 @model ImportVM
 @{
     ViewBag.Title = "Nhập danh mục từ file Excel";
-    Layout = "~/Views/Shared/_LayoutAce.cshtml";
-    ViewBag.ModuleName = "Quản lý Sự kiện";
+    Layout = "~/Views/Shared/_LayoutVelzon.cshtml"; // Thống nhất với Index
+    ViewBag.ModuleName = "Quản Lý Sự Kiện";
     ViewBag.PageName = "Nhập dữ liệu Excel";
+    ViewBag.ModuleCode = "QLSuKien";
 }
 <style>
+    .fix_p-box-action {
+        padding: 16px 16px 0 0;
+    }
+
     .no-padding .dataTables_wrapper table, .no-padding > table {
         border: 1px solid #ddd !important;
     }
@@ -24,109 +29,91 @@
         width: 100%;
     }
 </style>
-@section ActionBarRight{
 
-}
+<div class="mb-1 d-flex justify-content-end fix_p-box-action">
+    <a href="/QLSuKienArea/QLSuKien/Index" class="btn btn-primary btn-sm btn-secondary m-1 fix_btnBack">
+        <i class="ri-arrow-go-back-line"></i> Quay lại danh sách
+    </a>
+    <a href="@Model.PathTemplate" download class="btn btn-success btn-sm m-1">
+        <i class="fa fa-download"></i> Tải mẫu Excel
+    </a>
+</div>
 
-<div class="row nomargin" style="margin-top:10px;">
-    @using (Html.BeginForm("CheckImport", "QLSuKien", new { @area = "QLSuKienArea" }, FormMethod.Post, new { id = "formupload", @enctype = "multipart/form-data" }))
-    {
-        @Html.AntiForgeryToken()
-        <div class="form-inline">
-            <div class="col-sm-6">
-                <table class="tableinfoData">
-                    <tr>
-                        <td>
-                            <label class="control-label ">Tệp nhập dữ liệu<span style="color:red;">*</span></label>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <input type="file" name="file" class="form-control Valid IsRequire" />
-                                <div class="note-error">
-                                    <span class="error mes-note-error"></span>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label class="control-label">Mẫu file Excel</label></td>
-                        <td>
-                            <a href="@Model.PathTemplate" download class=" btn btn-success btn-sm">
-                                <i class="fa fa-download"></i> Tải xuống
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <button type="button" class="btn btn-primary" onclick="uploadFile()">Nhập dữ liệu</button>
-                        </td>
-                    </tr>
-                </table>
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Import dữ liệu Quản Lý Sự Kiện từ Excel</h4>
             </div>
-            <div class="row nomargin form-horizontal">
-                <table class="infoTable table-bordered">
-                    <caption class="center Bold">Cấu hình cột lấy thông tin</caption>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Tên trường thông tin</th>
-                            <th>Cấu hình</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Dòng bắt đầu đọc</td>
-                            <td><input type="number" data-min="0" class="form-control required validateNumber" name="ROWSTART" value="2" /></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Tên Sự Kiện</td>
-                            <td><input type="number" data-min="0" class="form-control required validateNumber" name="TenSuKien" value="1" /></td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Ngày Sự Kiện</td>
-                            <td><input type="number" data-min="0" class="form-control required validateNumber" name="NgaySuKien" value="2" /></td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Địa Điểm</td>
-                            <td><input type="number" data-min="0" class="form-control required validateNumber" name="DiaDiem" value="3" /></td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Mô Tả</td>
-                            <td><input type="number" data-min="0" class="form-control required validateNumber" name="MoTa" value="4" /></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card-body">
+                @using (Html.BeginForm("CheckImport", "QLSuKien", new { @area = "QLSuKienArea" }, FormMethod.Post, new { id = "formupload", @enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-6">
+                            <label class="form-label">Tệp nhập dữ liệu <span style="color:red;">*</span></label>
+                            <input type="file" name="file" class="form-control Valid IsRequire" />
+                            <div class="note-error">
+                                <span class="error mes-note-error"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary" onclick="uploadFile()">Nhập dữ liệu</button>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="infoTable table-bordered">
+                                <caption class="center Bold">Cấu hình cột lấy thông tin</caption>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tên trường thông tin</th>
+                                        <th>Cấu hình</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Dòng bắt đầu đọc</td>
+                                        <td><input type="number" data-min="0" class="form-control required validateNumber" name="ROWSTART" value="2" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Tên Sự Kiện</td>
+                                        <td><input type="number" data-min="0" class="form-control required validateNumber" name="TenSuKien" value="1" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Ngày Sự Kiện</td>
+                                        <td><input type="number" data-min="0" class="form-control required validateNumber" name="NgaySuKien" value="2" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>Địa Điểm</td>
+                                        <td><input type="number" data-min="0" class="form-control required validateNumber" name="DiaDiem" value="3" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>Mô Tả</td>
+                                        <td><input type="number" data-min="0" class="form-control required validateNumber" name="MoTa" value="4" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
-    }
+    </div>
 </div>
 
 @section scripts{
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/Scripts/ValidateHoanVu.js"></script>
     <script>
-        $(".checkBoxControl").click(function () {
-            var tbl = $(this).parents("table").first();
-            if ($(this).prop("checked")) {
-                tbl.find("input:checkbox.global_checkbox:unchecked").each(function () {
-                    $(this).prop("checked", true);
-                })
-            } else {
-                tbl.find("input:checkbox.global_checkbox:checked").each(function () {
-                    $(this).prop("checked", false);
-                })
-            }
-        })
-
         function uploadFile() {
-            $("#block-dung").css("display", "none");
-            $("#block-sai").css("display", "none");
             var valid = checkForm("formupload");
             if (valid) {
                 $("#formupload").submit();
