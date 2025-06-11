@@ -1,0 +1,137 @@
+@using Hinet.Model.IdentityEntities
+@using Hinet.Model.IdentityEntities
+@using Hinet.Web.Areas.QLNhanSuChinhThucArea.Models
+
+@model EditVM
+@{
+
+}
+<div class="modal-dialog">
+    @using (Ajax.BeginForm("Edit", "QLNhanSuChinhThuc", new { @area = "QLNhanSuChinhThucArea" }, new AjaxOptions()
+    {
+        HttpMethod = "POST",
+        OnFailure = "AjaxFormError",
+        OnSuccess = "AjaxFormSuccess",
+    }, new { id = "editQLNhanSuChinhThucForm", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        //HtmlHelper.UnobtrusiveJavaScriptEnabled = false;
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="center">
+                    <h4 class="modal-title">Cập nhật Quản lý thông tin ứng viên</h4>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    @Html.HiddenFor(x => x.Id)
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Vị trí ứng tuyển <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.ViTriUngTuyen, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.ViTriUngTuyen, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Trạng thái phản hồi <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.TrangThaiPhanHoi, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.TrangThaiPhanHoi, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Trạng thái kết quả <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.TrangThaiKetQua, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.TrangThaiKetQua, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Trạng thái xử lý <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.TrangThai, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.TrangThai, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Họ Tên <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.HoTen, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.HoTen, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Email <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Số điện thoại <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.SoDienThoai, new { @class = "form-control", type = "number" })
+                            @Html.ValidationMessageFor(m => m.SoDienThoai, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Trường Đại Học <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.TruongDaiHoc, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.TruongDaiHoc, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Công ty cũ <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextAreaFor(m => m.CongTyCu, 4, 3, new { @class = "form-control resize-vertical" })
+                            @Html.ValidationMessageFor(m => m.CongTyCu, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">NgaySinh <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.DatePickerFor(m => m.NgaySinh, "autoclose=true", "todayBtn=true", "todayHighlight=true")
+                            @Html.ValidationMessageFor(m => m.NgaySinh, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Nội dung phản hồi <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextAreaFor(m => m.NoiDungPhanHoi, 4, 3, new { @class = "form-control resize-vertical" })
+                            @Html.ValidationMessageFor(m => m.NoiDungPhanHoi, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Ghi chú kết quả <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextAreaFor(m => m.GhiChuKetQua, 4, 3, new { @class = "form-control resize-vertical" })
+                            @Html.ValidationMessageFor(m => m.GhiChuKetQua, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Ghi chú <span class="red">*</span></label>
+                        <div class="col-sm-8">
+                            @Html.TextAreaFor(m => m.GhiChu, 4, 3, new { @class = "form-control resize-vertical" })
+                            @Html.ValidationMessageFor(m => m.GhiChu, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="modal-footer center">
+                <button type="submit" class="btn btn-primary">Hoàn thành</button>
+
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    }
+</div>
+<script>
+
+</script>
+@Scripts.Render("~/bundles/jqueryval")

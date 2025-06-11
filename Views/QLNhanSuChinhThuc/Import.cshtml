@@ -1,0 +1,150 @@
+
+@using Hinet.Web.Areas.QLNhanSuChinhThucArea.Models;
+@model ImportVM
+    @{
+        ViewBag.Title = "Nhập danh mục từ file Excel";
+        Layout = "~/Views/Shared/_LayoutAce.cshtml";
+        ViewBag.ModuleName = "Quản lý Quản lý thông tin ứng viên";
+        ViewBag.PageName = "Nhập dữ liệu Excel";
+    }
+    <style>
+        .no-padding .dataTables_wrapper table, .no-padding > table {
+            border: 1px solid #ddd !important;
+        }
+
+        .infoTable tr td {
+            padding: 5px;
+        }
+
+        .infoTable tr th {
+            padding: 5px;
+            text-align: center;
+        }
+
+        .tableinfoData {
+            width: 100%;
+        }
+
+            .tableinfoData tr td {
+                padding: 5px;
+            }
+    </style>
+    @section ActionBarRight{
+
+    }
+
+    <div class="row nomargin" style="margin-top:10px;">
+
+        @*<div class="header">Import Dữ liệu</div>*@
+        @using (Html.BeginForm("CheckImport", "QLNhanSuChinhThuc", new { @area = "QLNhanSuChinhThucArea" }, FormMethod.Post, new { id = "formupload", @enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-inline">
+                <div class="col-sm-6">
+                    <table class="tableinfoData">
+                        <tr>
+                            <td>
+                                <label class="control-label ">Tệp nhập dữ liệu<span style="color:red;">*</span></label>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="file" name="fileImport" class="form-control Valid IsRequire" />
+                                    <div class="note-error">
+                                        <span class="error mes-note-error"></span>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label class="control-label">Mẫu file Excel</label></td>
+                            <td><a href="@Model.PathTemplate" download class=" btn btn-success btn-sm"><i class="fa fa-download"></i> Tải xuống</a></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+
+                                <button type="button" class="btn btn-primary" onclick="uploadFile()">Nhập dữ liệu</button>
+
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="row nomargin form-horizontal">
+                    <table class="infoTable table-bordered">
+                        <caption class="center Bold">Cấu hình cột lấy thông tin</caption>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Tên trường thông tin</th>
+                                <th>Cấu hình</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Dòng bắt đầu đọc</td>
+                                <td><input type="number" data-min="0" class="form-control required validateNumber" name="ROWSTART" value="2" /></td>
+                            </tr>
+
+<tr><td>2</td><td>Vị trí ứng tuyển</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="ViTriUngTuyen" value="1" /></td></tr>
+<tr><td>3</td><td>Trạng thái phản hồi</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="TrangThaiPhanHoi" value="2" /></td></tr>
+<tr><td>4</td><td>Trạng thái kết quả</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="TrangThaiKetQua" value="3" /></td></tr>
+<tr><td>5</td><td>Trạng thái xử lý</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="TrangThai" value="4" /></td></tr>
+<tr><td>6</td><td>Họ Tên</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="HoTen" value="5" /></td></tr>
+<tr><td>7</td><td>Email</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="Email" value="6" /></td></tr>
+<tr><td>8</td><td>Số điện thoại</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="SoDienThoai" value="7" /></td></tr>
+<tr><td>9</td><td>Trường Đại Học</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="TruongDaiHoc" value="8" /></td></tr>
+<tr><td>10</td><td>Công ty cũ</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="CongTyCu" value="9" /></td></tr>
+<tr><td>11</td><td>NgaySinh</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="NgaySinh" value="10" /></td></tr>
+<tr><td>12</td><td>Nội dung phản hồi</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="NoiDungPhanHoi" value="11" /></td></tr>
+<tr><td>13</td><td>Ghi chú kết quả</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="GhiChuKetQua" value="12" /></td></tr>
+<tr><td>14</td><td>Ghi chú</td><td><input type="number" data-min="0" class="form-control required validateNumber" name="GhiChu" value="13" /></td></tr>
+
+                            
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        }
+    </div>
+
+
+    @section scripts{
+        <script src="~/Scripts/ValidateHoanVu.js"></script>
+        <script>
+            $(".checkBoxControl").click(function () {
+                var tbl = $(this).parents("table").first();
+                if ($(this).prop("checked")) {
+                    tbl.find("input:checkbox.global_checkbox:unchecked").each(function () {
+                        $(this).prop("checked", true);
+                    })
+                } else {
+                    tbl.find("input:checkbox.global_checkbox:checked").each(function () {
+                        $(this).prop("checked", false);
+                    })
+                }
+            })
+
+
+            function uploadFile() {
+                $("#block-dung").css("display", "none");
+                $("#block-sai").css("display", "none");
+                var valid = checkForm("formupload");
+                if (valid) {
+                    $("#formupload").submit();
+                } else {
+                    NotiError("Vui lòng kiểm tra lại thông tin");
+                }
+                return false;
+
+            }
+
+        </script>
+    }
+
+

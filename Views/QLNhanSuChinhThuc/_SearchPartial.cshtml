@@ -1,0 +1,92 @@
+<style>
+    .fix_btnEx {
+        margin: 0 6px !important;
+    }
+    .row-block {
+        margin: 8px 0;
+    }
+</style>
+<div id="collapseDiv" class="panel-collapse collapse" aria-expanded="false" role="tabpanel">
+    <div class="well SearchBox">
+
+        @using (Ajax.BeginForm("searchData", "QLNhanSuChinhThuc", new { Area = "QLNhanSuChinhThucArea" },
+            new AjaxOptions()
+            {
+                HttpMethod = "POST",
+                OnFailure = "AjaxFormError",
+                OnSuccess = "AjaxSearchSuccess",
+            }, new { }))
+        {
+            @Html.AntiForgeryToken()
+        <div class="row row-block">
+            <div class="col-md-6 row-block">
+                <div class="col-md-4 txt-label">Họ Tên</div>
+                <div class="col-md-8">
+                    <input class="form-control width100" type="text" name="HoTenFilter" />
+                </div>
+            </div>
+
+            <div class="col-md-6 row-block">
+                <div class="col-md-4 txt-label">Số điện thoại</div>
+                <div class="col-md-8">
+                    <input type="number" class="form-control width100" name="SoDienThoaiFilter" />
+                </div>
+            </div>
+
+            <div class="col-md-6 row-block">
+                <div class="col-md-4 txt-label">Email</div>
+                <div class="col-md-8">
+                    <input class="form-control width100" type="text" name="EmailFilter" />
+                </div>
+            </div>
+
+
+            <div class="col-md-6 row-block">
+                <div class="col-md-4 txt-label">Phòng ban</div>
+                <div class="col-md-8">
+                    <input class="form-control width100" type="text" name="PhongBanFilter" />
+                </div>
+            </div>
+
+            <div class="col-md-6 row-block">
+                <div class="col-md-4 txt-label">Vị trí</div>
+                <div class="col-md-8">
+                    <input class="form-control width100" type="text" name="ViTriFilter" />
+                </div>
+            </div>
+
+            <div class="col-md-6 row-block">
+                <div class="col-md-4 txt-label">Trình độ đào tạo</div>
+                <div class="col-md-8">
+                    <input class="form-control width100" type="text" name="TrinhDoDaoTaoFilter" />
+                </div>
+            </div>
+
+            <div class="col-md-6 row-block">
+                <div class="col-md-4 txt-label">Trạng thái</div>
+                <div class="col-md-8">
+                    <input class="form-control width100" type="text" name="TrangThaiFilter" />
+                </div>
+            </div>
+
+
+            <div class="col-md-12 center" style=" margin-top:20px;">
+                <button id="btnSearch" type="submit" class="btn btn-labeled btn-primary btn-sm fix_btnFind">
+                    <span class="btn-label p-0">
+                        <i class="ri-search-line "></i>
+                    </span>
+                    Tìm kiếm
+                </button>
+                <a href="/QLNhanSuChinhThucArea/QLNhanSuChinhThuc/ExportExcel" class="btn btn-labeled btn-success btn-sm fix_btnEx"><span class='btn-label p-0'><i class='ri-download-2-line'></i></span> Xuất Excel</a>
+                <a aria-expanded="false" href="#collapseDiv" data-toggle="collapse" role="button" class="btn btn-labeled btn-danger btn-sm fix_btnClose">
+                    <span class="btn-label p-0"><i class="ri-close-line"></i></span>
+                    Đóng
+                </a>
+            </div>
+        </div>
+
+        }
+    </div>
+</div>
+
+

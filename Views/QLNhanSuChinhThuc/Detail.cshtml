@@ -1,0 +1,43 @@
+@{
+    ViewBag.Title = "Quản lý thông tin ứng viên";
+    Layout = "~/Views/Shared/_LayoutAce.cshtml";
+    ViewBag.ModuleName = "Quản lý Quản lý thông tin ứng viên";
+    ViewBag.PageName = "Thông tin Quản lý thông tin ứng viên";
+    ViewBag.ModuleCode = "QLNhanSuChinhThuc_detail";
+}
+@using Hinet.Model.IdentityEntities
+@using Hinet.Model.Entities
+@using Hinet.Web.Areas.QLNhanSuChinhThucArea.Models
+
+@model DetailVM
+@section ActionBarRight{
+    <a href="/QLNhanSuChinhThucArea/QLNhanSuChinhThuc/Index" class="btn btn-primary btn-sm"><i class="fa fa-reply" aria-hidden="true"></i> Quay lại</a>
+}
+
+<div class="row">
+     <div class="col-sm-12">
+         <table class="table-info">
+             @*
+        <tr><td>Vị trí ứng tuyển</td><td>@Model.objInfo.ViTriUngTuyen</td></tr>
+        <tr><td>Trạng thái phản hồi</td><td>@Model.objInfo.TrangThaiPhanHoi</td></tr>
+        <tr><td>Trạng thái kết quả</td><td>@Model.objInfo.TrangThaiKetQua</td></tr>
+        <tr><td>Trạng thái xử lý</td><td>@Model.objInfo.TrangThai</td></tr>
+        <tr><td>Họ Tên</td><td>@Model.objInfo.HoTen</td></tr>
+        <tr><td>Email</td><td>@Model.objInfo.Email</td></tr>
+        <tr><td>Số điện thoại</td><td>@Model.objInfo.SoDienThoai</td></tr>
+        <tr><td>Trường Đại Học</td><td>@Model.objInfo.TruongDaiHoc</td></tr>
+        <tr><td>Công ty cũ</td><td>@Model.objInfo.CongTyCu</td></tr>
+        <tr><td>NgaySinh</td><td>@Model.objInfo.NgaySinh</td></tr>
+        <tr><td>Nội dung phản hồi</td><td>@Model.objInfo.NoiDungPhanHoi</td></tr>
+        <tr><td>Ghi chú kết quả</td><td>@Model.objInfo.GhiChuKetQua</td></tr>
+        <tr><td>Ghi chú</td><td>@Model.objInfo.GhiChu</td></tr>
+             *@
+         </table>
+     </div>
+    
+</div>
+
+<script>
+
+</script>
+@Scripts.Render("~/bundles/jqueryval")
