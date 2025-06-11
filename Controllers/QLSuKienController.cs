@@ -246,6 +246,56 @@ namespace Hinet.Web.Areas.QLSuKienArea.Controllers
             return View(model);
         }
         #endregion
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CheckImport(HttpPostedFileBase file, int? ROWSTART, int? TenSuKien, int? NgaySuKien, int? DiaDiem, int? MoTa)
+        {
+            // Khởi tạo đúng kiểu và truyền 'true' cho state (nếu constructor yêu cầu); 
+            // hoặc không truyền gì nếu có constructor không tham số
+            var result = new JsonResultImportBO<QLSuKienImportDto>(true);
+
+            try
+            {
+                // Kiểm tra file
+                if (file == null || file.ContentLength == 0)
+                {
+                    result.Status = false;
+                    result.Message = "Chưa chọn file hoặc file rỗng.";
+                    return View("checkImport", result);
+                }
+
+                // TODO: Đọc file Excel và lấy dữ liệu vào listData
+                var listData = new List<QLSuKienImportDto>();
+                // ... Đọc file, ví dụ bằng EPPlus/NPOI, gán vào listData ...
+
+                // Ví dụ kiểm tra dữ liệu hợp lệ (cần sửa lại điều kiện thực tế)
+                result.ListData = listData.Where(x => IsValidImport(x)).ToList();
+                result.ListFalse = listData
+             .Where(x => !IsValidImport(x))
+             .Select(x => new List<string>
+             {
+                x.TenSuKien,
+                x.NgaySuKien,
+                x.DiaDiem,
+                x.MoTa
+             })
+             .ToList();
+                result.Status = true;
+                result.Message = "Đã kiểm tra dữ liệu import.";
+            }
+            catch (Exception ex)
+            {
+                result.Status = false;
+                result.Message = "Lỗi import: " + ex.Message;
+            }
+            return View("checkImport", result);
+        }
+
+        // Ví dụ hàm kiểm tra hợp lệ, bạn sửa lại cho đúng nghiệp vụ
+        private bool IsValidImport(QLSuKienImportDto x)
+        {
+            return !string.IsNullOrWhiteSpace(x.TenSuKien); // hoặc điều kiện bạn muốn
+        }
         // Action hỗ trợ tải về các dữ liệu lỗi không import được
         [HttpPost]
         public JsonResult GetExportError(List<string> lstData)
